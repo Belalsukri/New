@@ -1,4 +1,9 @@
 {
+  "services": {
+    "frontend": {
+      "root": "."
+    }
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
