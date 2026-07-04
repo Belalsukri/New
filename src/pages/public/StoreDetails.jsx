@@ -185,7 +185,7 @@ const StoreDetails = () => {
                                         )}
                                     </div>
                                     <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{product.name}</h3>
-                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem', display: '-webkit-box', WebkitLineClamp: '2', WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{product.description}</p>
+                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{product.description}</p>
                                     <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.2rem' }}>{product.price} ر.س</p>
                                     {(() => {
                                         if (!store.phoneNumber) return null;
