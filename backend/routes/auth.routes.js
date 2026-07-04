@@ -162,8 +162,8 @@ router.post('/forgotpassword', async (req, res) => {
         await user.save({ validateBeforeSave: false });
 
         // Create reset url
-        // Create reset url - uses FRONTEND_URL env var in production, fallback to localhost for dev
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+        // Create reset url - uses FRONTEND_URL env var or the fixed vercel URL
+        const frontendUrl = process.env.FRONTEND_URL || 'https://new-amber-iota.vercel.app';
         const resetUrl = `${frontendUrl}/reset-password/${resetToken}`;
 
         const message = `لقد طلبت إعادة تعيين كلمة المرور.\n\nالرجاء النقر على الرابط التالي لإعادة تعيين كلمة المرور:\n\n${resetUrl}`;
