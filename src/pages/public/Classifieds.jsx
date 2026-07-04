@@ -26,7 +26,7 @@ const Classifieds = () => {
             if (category) params.append('category', category);
             if (type) params.append('type', type);
 
-            const res = await fetch(`${API_URL}/api/ads?${params.toString()}`);
+            const res = await fetch(`${API_URL}/api/classifieds?${params.toString()}`);
             const data = await res.json();
             setAds(data);
         } catch (error) {

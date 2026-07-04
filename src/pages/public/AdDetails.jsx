@@ -14,7 +14,7 @@ const AdDetails = () => {
     useEffect(() => {
         const fetchAd = async () => {
             try {
-                const res = await fetch(`${API_URL}/api/ads/${id}`);;
+                const res = await fetch(`${API_URL}/api/classifieds/${id}`);
                 const data = await res.json();
                 setAd(data);
             } catch (error) {

@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
         }
 
         const ads = await ClassifiedAd.find(query)
-            .sort('-createdAt')
+            .sort({ _id: -1 })
             .populate('user', 'name')
             .lean();
 
@@ -43,7 +43,7 @@ router.get('/', async (req, res) => {
 // @access  Private
 router.get('/my', protect, async (req, res) => {
     try {
-        const ads = await ClassifiedAd.find({ user: req.user._id }).sort('-createdAt');
+        const ads = await ClassifiedAd.find({ user: req.user._id }).sort({ _id: -1 });
         res.json(ads);
     } catch (error) {
         res.status(500).json({ message: error.message });

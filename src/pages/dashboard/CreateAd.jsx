@@ -27,7 +27,7 @@ const CreateAd = () => {
         if (isEdit) {
             const fetchAd = async () => {
                 try {
-                    const res = await fetch(`${API_URL}/api/ads/${id}`);
+                    const res = await fetch(`${API_URL}/api/classifieds/${id}`);
                     const data = await res.json();
                     setFormData({
                         title: data.title,
@@ -68,7 +68,7 @@ const CreateAd = () => {
         e.preventDefault();
         setSaving(true);
         try {
-            const res = await fetch(isEdit ? `${API_URL}/api/ads/${id}` : `${API_URL}/api/ads`, {
+            const res = await fetch(isEdit ? `${API_URL}/api/classifieds/${id}` : `${API_URL}/api/classifieds`, {
                 method: isEdit ? 'PUT' : 'POST',
                 headers: {
                     'Content-Type': 'application/json',

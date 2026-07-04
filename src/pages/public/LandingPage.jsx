@@ -22,7 +22,7 @@ const LandingPage = () => {
     useEffect(() => {
         const fetchAds = async () => {
             try {
-                const res = await fetch(`${API_URL}/api/ads`);
+                const res = await fetch(`${API_URL}/api/classifieds`);
                 const data = await res.json();
                 setAds(data);
             } catch (error) {

@@ -44,7 +44,7 @@ connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/stores', storeRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/ads', adRoutes);
+app.use('/api/classifieds', adRoutes);
 
 // Health check
 app.get('/', (req, res) => {

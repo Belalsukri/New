@@ -12,7 +12,7 @@ const MyAds = () => {
 
     const fetchMyAds = async () => {
         try {
-            const res = await fetch(`${API_URL}/api/ads/my`, {
+            const res = await fetch(`${API_URL}/api/classifieds/my`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -33,7 +33,7 @@ const MyAds = () => {
 
         setDeleting(id);
         try {
-            const res = await fetch(`${API_URL}/api/ads/${id}`, {
+            const res = await fetch(`${API_URL}/api/classifieds/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
