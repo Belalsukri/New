@@ -1,18 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { ArrowRight, Upload, X, Save, Loader, Tag, Info } from 'lucide-react';
+import { ArrowRight, Upload, X, Save, Loader, Tag, Info, Crop } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import API_URL from '../../config';
+import Cropper from 'react-easy-crop';
+import getCroppedImg from '../../utils/cropImage';
 
 const CreateAd = () => {
     const { id } = useParams();
     const isEdit = !!id;
     const navigate = useNavigate();
     const { token } = useAuth();
+    const fileInputRef = useRef(null);
 
     const [loading, setLoading] = useState(isEdit);
     const [saving, setSaving] = useState(false);
     const [images, setImages] = useState([]);
+    
+    // Cropper State
+    const [tempImage, setTempImage] = useState(null);
+    const [crop, setCrop] = useState({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+    const [isCropping, setIsCropping] = useState(false);
+    const [currentCropIndex, setCurrentCropIndex] = useState(null);
+
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -49,19 +61,59 @@ const CreateAd = () => {
         }
     }, [id, isEdit]);
 
-    const handleImageChange = (e) => {
+    const handleImageSelection = (e) => {
         const files = Array.from(e.target.files);
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setImages(prev => [...prev, reader.result]);
-            };
-            reader.readAsDataURL(file);
-        });
+        if (files.length > 0) {
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const result = reader.result;
+                    setImages(prev => [...prev, result]);
+                };
+                reader.readAsDataURL(file);
+            });
+            if (fileInputRef.current) fileInputRef.current.value = '';
+        }
     };
 
-    const removeImage = (index) => {
+    const onCropComplete = (croppedArea, croppedAreaPixels) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+    };
+
+    const saveCroppedImage = async () => {
+        try {
+            const croppedImage = await getCroppedImg(tempImage, croppedAreaPixels);
+            const newPreviews = [...images];
+            newPreviews[currentCropIndex] = croppedImage;
+            setImages(newPreviews);
+            setIsCropping(false);
+            setTempImage(null);
+            setCurrentCropIndex(null);
+        } catch (e) {
+            console.error('Error cropping image:', e);
+        }
+    };
+
+    const cancelCrop = () => {
+        setIsCropping(false);
+        setTempImage(null);
+        setCurrentCropIndex(null);
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current.click();
+    };
+
+    const removeImage = (index, e) => {
+        e.stopPropagation();
         setImages(images.filter((_, i) => i !== index));
+    };
+
+    const openCropper = (index, e) => {
+        e.stopPropagation();
+        setTempImage(images[index]);
+        setCurrentCropIndex(index);
+        setIsCropping(true);
     };
 
     const handleSubmit = async (e) => {
@@ -90,6 +142,31 @@ const CreateAd = () => {
 
     return (
         <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto' }}>
+            {/* Cropper Modal */}
+            {isCropping && tempImage && (
+                <div style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'black', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ position: 'relative', flex: 1, background: '#333' }}>
+                        <Cropper
+                            image={tempImage}
+                            crop={crop}
+                            zoom={zoom}
+                            aspect={1}
+                            onCropChange={setCrop}
+                            onZoomChange={setZoom}
+                            onCropComplete={onCropComplete}
+                        />
+                    </div>
+                    <div style={{ padding: '1rem', background: '#222', display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                        <button type="button" onClick={saveCroppedImage} style={{ background: '#2563eb', color: 'white', padding: '0.75rem 2rem', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
+                            قص وحفظ
+                        </button>
+                        <button type="button" onClick={cancelCrop} style={{ background: '#475569', color: 'white', padding: '0.75rem 2rem', borderRadius: '8px', border: 'none', fontWeight: 600, cursor: 'pointer' }}>
+                            إلغاء
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
                 <Link to="/dashboard/ads" style={{ color: 'var(--text-muted)' }}><ArrowRight /></Link>
                 <h1 style={{ fontSize: '1.75rem', fontWeight: 800, margin: 0 }}>{isEdit ? 'تعديل الإعلان' : 'نشر إعلان جديد'}</h1>
@@ -151,28 +228,41 @@ const CreateAd = () => {
                     <div className="card" style={{ padding: '2rem', background: 'white', borderRadius: '24px' }}>
                         <h3 style={{ marginBottom: '1.5rem' }}>الصور</h3>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '1rem' }}>
-                            <label style={{
-                                height: '120px',
-                                border: '2px dashed #e2e8f0',
-                                borderRadius: '16px',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                color: 'var(--text-muted)'
-                            }}>
+                            <div
+                                onClick={triggerFileInput}
+                                style={{
+                                    height: '120px',
+                                    border: '2px dashed #e2e8f0',
+                                    borderRadius: '16px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    color: 'var(--text-muted)'
+                                }}
+                            >
                                 <Upload size={24} />
                                 <span style={{ fontSize: '0.8rem', marginTop: '0.5rem' }}>إضافة صورة</span>
-                                <input type="file" hidden multiple accept="image/*" onChange={handleImageChange} />
-                            </label>
+                            </div>
+                            <input type="file" ref={fileInputRef} hidden multiple accept="image/*" onChange={handleImageSelection} />
+                            
                             {images.map((img, idx) => (
                                 <div key={idx} style={{ height: '120px', borderRadius: '16px', overflow: 'hidden', position: 'relative' }}>
                                     <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    
                                     <button
                                         type="button"
-                                        onClick={() => removeImage(idx)}
-                                        style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(239, 68, 68, 0.8)', color: 'white', border: 'none', borderRadius: '50%', padding: '2px' }}
+                                        onClick={(e) => openCropper(idx, e)}
+                                        style={{ position: 'absolute', top: '5px', left: '5px', background: 'rgba(37, 99, 235, 0.8)', color: 'white', border: 'none', borderRadius: '50%', padding: '4px', cursor: 'pointer' }}
+                                    >
+                                        <Crop size={14} />
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={(e) => removeImage(idx, e)}
+                                        style={{ position: 'absolute', top: '5px', right: '5px', background: 'rgba(239, 68, 68, 0.8)', color: 'white', border: 'none', borderRadius: '50%', padding: '4px', cursor: 'pointer' }}
                                     >
                                         <X size={14} />
                                     </button>
