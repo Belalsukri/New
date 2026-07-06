@@ -36,7 +36,7 @@ const AdDetails = () => {
             cleanPhone = '966' + cleanPhone;
         }
 
-        const message = `مرحباً، أنا مهتم بإعلانك "${ad.title}" على منصتي. هل لا يزال متاحاً؟`;
+        const message = `مرحباً، أنا مهتم بإعلانك "${ad.title}" على جوري. هل لا يزال متاحاً؟`;
         const whatsappUrl = `https://api.whatsapp.com/send/?phone=${cleanPhone}&text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
     };

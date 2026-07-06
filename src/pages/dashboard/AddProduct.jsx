@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { ArrowRight, Upload, Save, X } from 'lucide-react';
+import { ArrowRight, Upload, Save, X, Crop } from 'lucide-react';
 import { CATEGORIES } from '../../constants/locations';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
@@ -11,7 +11,7 @@ const AddProduct = () => {
     const navigate = useNavigate();
     const { addProduct, updateProduct, myProducts, fetchMyProducts } = useProducts();
     const fileInputRef = useRef(null);
-    const [imagePreview, setImagePreview] = useState(null);
+    const [imagesPreview, setImagesPreview] = useState([]);
     const [error, setError] = useState('');
 
     // Cropper State
@@ -20,13 +20,14 @@ const AddProduct = () => {
     const [zoom, setZoom] = useState(1);
     const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
     const [isCropping, setIsCropping] = useState(false);
+    const [currentCropIndex, setCurrentCropIndex] = useState(null);
 
     const [formData, setFormData] = useState({
         name: '',
         price: '',
         category: '',
         description: '',
-        image: null
+        images: []
     });
 
     useEffect(() => {
@@ -39,29 +40,28 @@ const AddProduct = () => {
                     price: product.price || '',
                     category: product.category || '',
                     description: product.description || '',
-                    image: product.images?.[0] || null
+                    images: product.images || []
                 });
-                setImagePreview(product.images?.[0] || null);
+                setImagesPreview(product.images || []);
             } else {
-                // Not found in current list, try fetching
                 fetchMyProducts();
             }
         }
     }, [id, myProducts, fetchMyProducts]);
 
     const handleImageSelection = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const result = reader.result;
-                setTempImage(result);
-                // Set as current image immediately (Natural/Original)
-                setImagePreview(result);
-                setFormData(prev => ({ ...prev, image: result }));
-                // Do not auto-open cropper: setIsCropping(true);
-            };
-            reader.readAsDataURL(file);
+        const files = Array.from(e.target.files);
+        if (files.length > 0) {
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const result = reader.result;
+                    setImagesPreview(prev => [...prev, result]);
+                    setFormData(prev => ({ ...prev, images: [...prev.images, result] }));
+                };
+                reader.readAsDataURL(file);
+            });
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 
@@ -72,10 +72,16 @@ const AddProduct = () => {
     const saveCroppedImage = async () => {
         try {
             const croppedImage = await getCroppedImg(tempImage, croppedAreaPixels);
-            setImagePreview(croppedImage);
-            setFormData(prev => ({ ...prev, image: croppedImage }));
+            
+            const newPreviews = [...imagesPreview];
+            newPreviews[currentCropIndex] = croppedImage;
+            setImagesPreview(newPreviews);
+            
+            setFormData(prev => ({ ...prev, images: newPreviews }));
+            
             setIsCropping(false);
-            setTempImage(null); // Clear tempImage after cropping
+            setTempImage(null);
+            setCurrentCropIndex(null);
         } catch (e) {
             console.error(e);
             setError('فشل قص الصورة');
@@ -84,25 +90,26 @@ const AddProduct = () => {
 
     const cancelCrop = () => {
         setIsCropping(false);
-        // If tempImage was set from a new file, clear it.
-        // If it was an existing image, we don't want to clear imagePreview.
-        // For now, let's assume tempImage is only for the current cropping session.
         setTempImage(null);
-        if (fileInputRef.current) fileInputRef.current.value = '';
+        setCurrentCropIndex(null);
     };
 
     const triggerFileInput = () => {
         fileInputRef.current.click();
     };
 
-    const removeImage = (e) => {
+    const removeImage = (index, e) => {
         e.stopPropagation();
-        setImagePreview(null);
-        setFormData(prev => ({ ...prev, image: null }));
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
-        }
-        setTempImage(null); // Also clear tempImage if it was set
+        const newPreviews = imagesPreview.filter((_, i) => i !== index);
+        setImagesPreview(newPreviews);
+        setFormData(prev => ({ ...prev, images: newPreviews }));
+    };
+
+    const openCropper = (index, e) => {
+        e.stopPropagation();
+        setTempImage(imagesPreview[index]);
+        setCurrentCropIndex(index);
+        setIsCropping(true);
     };
 
     const handleSubmit = async (e) => {
@@ -127,7 +134,6 @@ const AddProduct = () => {
         }
     };
 
-    // Inline styles to replace CSS module usage for safety
     const inputGroupStyle = { display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%' };
     const inputStyle = { padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0', width: '100%', fontSize: '0.95rem' };
 
@@ -170,8 +176,8 @@ const AddProduct = () => {
                                 style={{ width: '100%' }}
                             />
                         </div>
-                        <button onClick={cancelCrop} className="btn btn-outline">إلغاء</button>
-                        <button onClick={saveCroppedImage} className="btn btn-primary">قص وحفظ</button>
+                        <button type="button" onClick={cancelCrop} className="btn btn-outline">إلغاء</button>
+                        <button type="button" onClick={saveCroppedImage} className="btn btn-primary">قص وحفظ</button>
                     </div>
                 </div>
             )}
@@ -239,101 +245,106 @@ const AddProduct = () => {
                     </div>
 
                     <div style={inputGroupStyle}>
-                        <label style={{ fontWeight: 500 }}>صور المنتج   (سيتم قص الصورة لتكون مربعة)</label>
+                        <label style={{ fontWeight: 500 }}>صور المنتج (يمكنك إضافة صور متعددة)</label>
                         <input
                             type="file"
                             ref={fileInputRef}
                             onChange={handleImageSelection}
                             style={{ display: 'none' }}
                             accept="image/*"
+                            multiple
                         />
 
-                        {!imagePreview ? (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                            {imagesPreview.map((preview, index) => (
+                                <div key={index} style={{ position: 'relative', width: '150px', height: '150px' }}>
+                                    <img
+                                        src={preview}
+                                        alt={`Preview ${index}`}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'contain',
+                                            borderRadius: '8px',
+                                            border: '1px solid #e2e8f0',
+                                            backgroundColor: '#f8fafc'
+                                        }}
+                                    />
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '-10px',
+                                        right: '-10px',
+                                        display: 'flex',
+                                        gap: '0.3rem'
+                                    }}>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => openCropper(index, e)}
+                                            style={{
+                                                background: 'var(--primary)',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                width: '28px',
+                                                height: '28px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                            }}
+                                            title="قص الصورة"
+                                        >
+                                            <Crop size={14} />
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={(e) => removeImage(index, e)}
+                                            style={{
+                                                background: '#ef4444',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '50%',
+                                                width: '28px',
+                                                height: '28px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                            }}
+                                            title="حذف الصورة"
+                                        >
+                                            <X size={14} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+
                             <div
                                 onClick={triggerFileInput}
                                 style={{
+                                    width: '150px',
+                                    height: '150px',
                                     border: '2px dashed #94a3b8',
                                     borderRadius: '8px',
-                                    padding: '2rem',
-                                    textAlign: 'center',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                     cursor: 'pointer',
                                     background: '#f8fafc',
-                                    transition: 'all 0.2s'
+                                    transition: 'all 0.2s',
+                                    padding: '1rem',
+                                    textAlign: 'center'
                                 }}
-                                onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary, #2563eb)'}
+                                onMouseOver={(e) => e.currentTarget.style.borderColor = 'var(--primary)'}
                                 onMouseOut={(e) => e.currentTarget.style.borderColor = '#94a3b8'}
                             >
-                                <Upload size={32} color="#64748b" style={{ marginBottom: '1rem' }} />
-                                <p style={{ color: '#64748b' }}>اضغط لرفع صورة المنتج</p>
+                                <Upload size={24} color="#64748b" style={{ marginBottom: '0.5rem' }} />
+                                <span style={{ color: '#64748b', fontSize: '0.85rem' }}>إضافة صورة</span>
                             </div>
-                        ) : (
-                            <div style={{ position: 'relative', width: 'fit-content' }}>
-                                <img
-                                    src={imagePreview}
-                                    alt="Preview"
-                                    style={{
-                                        width: '200px',
-                                        height: '200px',
-                                        objectFit: 'contain',
-                                        borderRadius: '8px',
-                                        border: '1px solid #e2e8f0',
-                                        backgroundColor: '#f8fafc'
-                                    }}
-                                />
-                                <div style={{
-                                    position: 'absolute',
-                                    top: '-10px',
-                                    right: '-10px',
-                                    display: 'flex',
-                                    gap: '0.5rem'
-                                }}>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            // Set tempImage to current imagePreview for editing
-                                            setTempImage(imagePreview);
-                                            setIsCropping(true);
-                                        }}
-                                        style={{
-                                            background: 'var(--primary)',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '50%',
-                                            width: '32px',
-                                            height: '32px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            cursor: 'pointer',
-                                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                                        }}
-                                        title="قص وتعديل"
-                                    >
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={removeImage}
-                                        style={{
-                                            background: '#ef4444',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '50%',
-                                            width: '32px',
-                                            height: '32px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            cursor: 'pointer',
-                                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                                        }}
-                                        title="حذف"
-                                    >
-                                        <X size={16} />
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>

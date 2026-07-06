@@ -68,11 +68,29 @@ router.get('/my', protect, merchantOnly, async (req, res) => {
     }
 });
 
+// @route   GET /api/products/:id
+// @desc    Get product by ID
+// @access  Public
+router.get('/:id', async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id)
+            .populate('store', 'name image address phoneNumber')
+            .lean();
+        
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+        res.json(product);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 // @route   POST /api/products
 // @desc    Create a product
 // @access  Private/Merchant
 router.post('/', protect, merchantOnly, async (req, res) => {
-    const { name, price, description, category, stock, image } = req.body;
+    const { name, price, description, category, stock, image, images } = req.body;
     console.log('--- DEBUG: Create Product ---');
     console.log('User ID:', req.user._id);
     console.log('User Role:', req.user.role);
@@ -84,13 +102,20 @@ router.post('/', protect, merchantOnly, async (req, res) => {
             return res.status(400).json({ message: 'No store associated with this user. Please log out and log back in, or contact support if the issue persists.' });
         }
 
+        let productImages = [];
+        if (images && Array.isArray(images) && images.length > 0) {
+            productImages = images;
+        } else if (image) {
+            productImages = [image];
+        }
+
         const product = new Product({
             name,
             price,
             description,
             category,
             stock,
-            images: image ? [image] : [],
+            images: productImages,
             store: req.user.storeId,
         });
 
@@ -105,7 +130,7 @@ router.post('/', protect, merchantOnly, async (req, res) => {
 // @desc    Update a product
 // @access  Private/Merchant
 router.put('/:id', protect, merchantOnly, async (req, res) => {
-    const { name, price, description, category, stock, image } = req.body;
+    const { name, price, description, category, stock, image, images } = req.body;
 
     try {
         const product = await Product.findById(req.params.id);
@@ -120,9 +145,10 @@ router.put('/:id', protect, merchantOnly, async (req, res) => {
             product.description = description || product.description;
             product.category = category || product.category;
             product.stock = stock || product.stock;
-            if (image) {
-                // If new image provided, replace. If you want to append, push.
-                // Assuming replace (single image UI)
+            
+            if (images && Array.isArray(images)) {
+                product.images = images;
+            } else if (image) {
                 product.images = [image];
             }
 

@@ -15,6 +15,7 @@ import AddProduct from './pages/dashboard/AddProduct';
 import StoreSettings from './pages/dashboard/StoreSettings';
 import LandingPage from './pages/public/LandingPage';
 import StoreDetails from './pages/public/StoreDetails';
+import ProductDetails from './pages/public/ProductDetails';
 import AboutPage from './pages/public/AboutPage';
 import Classifieds from './pages/public/Classifieds';
 import AdDetails from './pages/public/AdDetails';
@@ -31,6 +32,7 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<LandingPage />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/store/:id" element={<StoreDetails />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/ads" element={<Classifieds />} />

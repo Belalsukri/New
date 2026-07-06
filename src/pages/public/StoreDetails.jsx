@@ -77,9 +77,9 @@ const StoreDetails = () => {
                 <div style={{ position: 'relative', zIndex: 10, paddingTop: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', direction: 'rtl', width: '100%', paddingLeft: '2rem', paddingRight: '2rem' }}>
                     <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'white', textDecoration: 'none' }}>
                         <div style={{ background: 'white', padding: '0.4rem', borderRadius: '8px', display: 'flex' }}>
-                            <Store size={20} color="var(--primary)" />
+                            <img src="/logo.png" alt="جوري" style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
                         </div>
-                        <span style={{ fontWeight: 700, fontSize: '1.2rem' }}>منصتي</span>
+                        <span style={{ fontWeight: 700, fontSize: '1.2rem' }}>جوري</span>
                     </Link>
                     <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'white', textDecoration: 'none', background: 'rgba(255,255,255,0.2)', padding: '0.5rem 1rem', borderRadius: '8px', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.3)' }}>
                         <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>الرئيسية</span>
@@ -159,34 +159,35 @@ const StoreDetails = () => {
                     ) : (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '2rem' }}>
                             {products.map((product) => (
-                                <div key={product._id} className="card" style={{ padding: '1rem' }}>
-                                    <div style={{
-                                        width: '100%',
-                                        aspectRatio: '1',
-                                        background: '#f1f5f9',
-                                        borderRadius: 'var(--radius-md)',
-                                        marginBottom: '1rem',
-                                        overflow: 'hidden',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center'
-                                    }}>
-                                        {product.images?.[0] ? (
-                                            <img
-                                                src={product.images[0]}
-                                                alt={product.name}
-                                                style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: 'pointer' }}
-                                                onClick={() => setSelectedImage(product.images[0])}
-                                            />
-                                        ) : (
-                                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
-                                                <ShoppingBag size={32} color="#cbd5e1" />
-                                            </div>
-                                        )}
-                                    </div>
-                                    <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{product.name}</h3>
-                                    <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{product.description}</p>
-                                    <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.2rem' }}>{product.price} ر.س</p>
+                                <div key={product._id} className="card" style={{ padding: '1rem', display: 'flex', flexDirection: 'column' }}>
+                                    <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                                        <div style={{
+                                            width: '100%',
+                                            aspectRatio: '1',
+                                            background: '#f1f5f9',
+                                            borderRadius: 'var(--radius-md)',
+                                            marginBottom: '1rem',
+                                            overflow: 'hidden',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center'
+                                        }}>
+                                            {product.images?.[0] ? (
+                                                <img
+                                                    src={product.images[0]}
+                                                    alt={product.name}
+                                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                                                />
+                                            ) : (
+                                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
+                                                    <ShoppingBag size={32} color="#cbd5e1" />
+                                                </div>
+                                            )}
+                                        </div>
+                                        <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{product.name}</h3>
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{product.description}</p>
+                                        <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.2rem' }}>{product.price} ر.س</p>
+                                    </Link>
                                     {(() => {
                                         if (!store.phoneNumber) return null;
 

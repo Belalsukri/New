@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Store, ShoppingBag, TrendingUp, ShieldCheck, User, MapPin, Phone, Search, ChevronDown } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Store, ShoppingBag, TrendingUp, ShieldCheck, User, MapPin, Phone, Search, ChevronDown, Facebook, Instagram, Menu, X, ArrowRight } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import styles from './LandingPage.module.css';
 import { useStores } from '../../context/StoreContext';
-import { useAuth } from '../../context/AuthContext';
 import { GOVERNORATES, CATEGORIES } from '../../constants/locations';
 import API_URL from '../../config';
 
@@ -69,10 +69,12 @@ const LandingPage = () => {
             {/* Navbar */}
             <nav className={styles.navbar}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%' }}>
-                    <div className={styles.logo}>
-                        <Store size={28} color="var(--primary)" />
-                        <span>منصتي</span>
-                    </div>
+                    <Link to="/" className={styles.logo}>
+                        <div className={styles.logoIcon} style={{ background: 'transparent' }}>
+                            <img src="/logo.png" alt="جوري" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                        </div>
+                        <span>جوري</span>
+                    </Link>
                     <div className={styles.navLinks}>
                         <Link to="/ads" className={`btn btn-primary ${styles.navBtn}`} style={{ textDecoration: 'none' }}>الإعلانات الصغيرة</Link>
                         {user ? (
@@ -171,70 +173,28 @@ const LandingPage = () => {
                                 <p>جاري البحث...</p>
                             </div>
                         ) : productResults.length > 0 ? (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '2rem' }}>
+                            <div className={styles.itemsGrid}>
                                 {productResults.map((product) => (
-                                    <div key={product._id} className="card" style={{
-                                        border: '1px solid var(--border-color)',
-                                        borderRadius: '16px',
-                                        overflow: 'hidden',
-                                        background: 'white',
-                                        transition: 'transform 0.3s ease',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        flexDirection: 'column'
-                                    }}>
-                                        <div style={{
-                                            position: 'relative',
-                                            width: '100%',
-                                            aspectRatio: '1',
-                                            background: '#f8fafc',
-                                            borderBottom: '1px solid var(--border-color)',
-                                            padding: '1rem'
-                                        }}>
+                                    <Link to={`/product/${product._id}`} key={product._id} className={styles.temuCard} style={{textDecoration: 'none', color: 'inherit'}}>
+                                        <div className={styles.temuImageContainer}>
                                             {product.images && product.images.length > 0 ? (
                                                 <img
                                                     src={product.images[0]}
                                                     alt={product.name}
-                                                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                                                 />
                                             ) : (
-                                                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#cbd5e1' }}>
-                                                    <ShoppingBag size={48} />
-                                                </div>
+                                                <ShoppingBag size={48} color="#cbd5e1" />
                                             )}
                                         </div>
-                                        <div style={{ padding: '1.2rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                            <div style={{ marginBottom: 'auto' }}>
-                                                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.3rem' }}>
-                                                    {product.category || 'عام'}
-                                                </div>
-                                                <h3 style={{ fontSize: '1.1rem', fontWeight: 600, margin: '0 0 0.5rem', color: 'var(--text-primary)' }}>
-                                                    {product.name}
-                                                </h3>
-                                                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', margin: 0 }}>
-                                                    {product.description}
-                                                </p>
-                                            </div>
-                                            <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <span style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--primary)' }}>
-                                                    {product.price} ر.س
-                                                </span>
-                                                {product.store && (
-                                                    <Link to={`/store/${typeof product.store === 'object' ? product.store._id : product.store}`} style={{
-                                                        fontSize: '0.8rem',
-                                                        color: 'var(--primary)',
-                                                        textDecoration: 'none',
-                                                        background: 'rgba(37, 99, 235, 0.1)',
-                                                        padding: '0.3rem 0.8rem',
-                                                        borderRadius: '20px',
-                                                        fontWeight: 600
-                                                    }}>
-                                                        {typeof product.store === 'object' ? product.store.name : 'زيارة المتجر'}
-                                                    </Link>
-                                                )}
+                                        <div className={styles.temuCardBody}>
+                                            <h3 className={styles.temuCardTitle}>
+                                                {product.name}
+                                            </h3>
+                                            <div className={styles.temuCardPrice}>
+                                                {product.price} ر.س
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         ) : (
@@ -257,7 +217,7 @@ const LandingPage = () => {
                     </div>
 
                     {/* Store/Ad Mixed Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '2rem' }}>
+                    <div className={styles.itemsGrid}>
                         {(() => {
                             const combinedItems = [];
 
@@ -309,204 +269,43 @@ const LandingPage = () => {
                             return combinedItems.map((item, index) => {
                                 if (item.type === 'store') {
                                     return (
-                                        <Link key={`store-${item._id}`} to={`/store/${item._id}`} className="card" style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            transition: 'all 0.3s ease',
-                                            cursor: 'pointer',
-                                            border: item.isFeatured ? '2px solid var(--primary)' : '1px solid var(--border-color)',
-                                            position: 'relative',
-                                            overflow: 'hidden',
-                                            padding: 0,
-                                            borderRadius: '16px',
-                                            background: 'white',
-                                            height: '100%'
-                                        }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                                            <div style={{
-                                                padding: '0.75rem 1rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.75rem',
-                                                borderBottom: '1px solid #f1f5f9',
-                                                background: 'white',
-                                                direction: 'rtl'
-                                            }}>
-                                                <div style={{
-                                                    width: '42px',
-                                                    height: '42px',
-                                                    borderRadius: '50%',
-                                                    overflow: 'hidden',
-                                                    border: '1px solid #e2e8f0',
-                                                    flexShrink: 0,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    background: '#f8fafc'
-                                                }}>
-                                                    {item.image ? (
-                                                        <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                    ) : (
-                                                        <Store size={20} color="var(--primary)" />
-                                                    )}
-                                                </div>
-                                                <div style={{ flex: 1 }}>
-                                                    <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#1e293b' }}>{item.name}</h3>
-                                                </div>
-                                                {item.isFeatured && (
-                                                    <div style={{
-                                                        background: 'var(--primary)',
-                                                        color: 'white',
-                                                        padding: '0.2rem 0.6rem',
-                                                        borderRadius: '20px',
-                                                        fontSize: '0.7rem',
-                                                        fontWeight: 700
-                                                    }}>مميز</div>
+                                        <Link key={`store-${item._id}`} to={item.lastProduct ? `/product/${item.lastProduct._id}` : `/store/${item._id}`} className={styles.temuCard} style={{textDecoration: 'none', color: 'inherit'}}>
+                                            <div className={styles.temuImageContainer}>
+                                                {item.lastProduct && item.lastProduct.images?.[0] ? (
+                                                    <img src={item.lastProduct.images[0]} alt={item.name} />
+                                                ) : item.image ? (
+                                                    <img src={item.image} alt={item.name} />
+                                                ) : (
+                                                    <Store size={48} color="#cbd5e1" />
                                                 )}
                                             </div>
-                                            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, background: 'white' }}>
-                                                {item.lastProduct && item.lastProduct.images?.[0] ? (
-                                                    <div style={{
-                                                        width: '100%',
-                                                        aspectRatio: '1',
-                                                        position: 'relative',
-                                                        borderTop: '1px solid var(--border-color)',
-                                                        borderBottom: '1px solid var(--border-color)',
-                                                        overflow: 'hidden',
-                                                        background: '#f8fafc',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center'
-                                                    }}>
-                                                        <img
-                                                            src={item.lastProduct.images[0]}
-                                                            alt={item.lastProduct.name}
-                                                            style={{ width: '100%', height: '100%', objectFit: 'contain', transition: 'transform 0.5s ease' }}
-                                                        />
-                                                        <div style={{
-                                                            position: 'absolute',
-                                                            bottom: 0,
-                                                            left: 0,
-                                                            right: 0,
-                                                            background: 'rgba(255, 255, 255, 0.95)',
-                                                            padding: '0.75rem 1rem',
-                                                            display: 'flex',
-                                                            justifyContent: 'space-between',
-                                                            alignItems: 'center',
-                                                            backdropFilter: 'blur(4px)',
-                                                            borderTop: '1px solid rgba(0,0,0,0.05)'
-                                                        }}>
-                                                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '2px' }}>وصل حديثاً</span>
-                                                                <span style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{item.lastProduct.name}</span>
-                                                            </div>
-                                                            <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>{item.lastProduct.price} ر.س</span>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div style={{ padding: '2rem 1.5rem', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.6', textAlign: 'center' }}>
-                                                            {item.description || 'لا يوجد وصف للمتجر'}
-                                                        </p>
-                                                    </div>
-                                                )}
-                                                {!item.lastProduct && (
-                                                    <div style={{ padding: '0 1.5rem 1.5rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                                                        {item.address && (
-                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                                <MapPin size={16} />
-                                                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.address}</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                )}
+                                            <div className={styles.temuCardBody}>
+                                                <h3 className={styles.temuCardTitle}>
+                                                    {item.lastProduct ? item.lastProduct.name : item.name}
+                                                </h3>
+                                                <div className={styles.temuCardPrice}>
+                                                    {item.lastProduct ? `${item.lastProduct.price} ر.س` : 'تصفح المتجر'}
+                                                </div>
                                             </div>
                                         </Link>
                                     );
                                 } else {
                                     // Render Ad Card
                                     return (
-                                        <Link key={`ad-${item._id}`} to={`/ads/${item._id}`} className="card" style={{
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            transition: 'all 0.3s ease',
-                                            cursor: 'pointer',
-                                            border: '1px solid var(--border-color)',
-                                            position: 'relative',
-                                            overflow: 'hidden',
-                                            padding: 0,
-                                            borderRadius: '16px',
-                                            background: 'white',
-                                            height: '100%'
-                                        }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
-                                            <div style={{
-                                                padding: '0.75rem 1rem',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.75rem',
-                                                borderBottom: '1px solid #f1f5f9',
-                                                background: 'white',
-                                                direction: 'rtl'
-                                            }}>
-                                                <div style={{
-                                                    width: '42px',
-                                                    height: '42px',
-                                                    borderRadius: '50%',
-                                                    overflow: 'hidden',
-                                                    border: '1px solid #e2e8f0',
-                                                    flexShrink: 0,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    background: '#f8fafc'
-                                                }}>
-                                                    <User size={20} color="var(--primary)" />
-                                                </div>
-                                                <div style={{ flex: 1 }}>
-                                                    <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: 700, color: '#1e293b' }}>{item.user?.name || 'مستخدم'}</h3>
-                                                </div>
+                                        <Link key={`ad-${item._id}`} to={`/ads/${item._id}`} className={styles.temuCard} style={{textDecoration: 'none'}}>
+                                            <div className={styles.temuImageContainer}>
+                                                {item.images && item.images.length > 0 ? (
+                                                    <img src={item.images[0]} alt={item.title} />
+                                                ) : (
+                                                    <ShoppingBag size={48} color="#cbd5e1" />
+                                                )}
                                             </div>
-
-                                            <div style={{ display: 'flex', flexDirection: 'column', flex: 1, background: 'white' }}>
-                                                <div style={{
-                                                    width: '100%',
-                                                    aspectRatio: '1',
-                                                    position: 'relative',
-                                                    borderTop: '1px solid var(--border-color)',
-                                                    borderBottom: '1px solid var(--border-color)',
-                                                    overflow: 'hidden',
-                                                    background: '#f8fafc',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center'
-                                                }}>
-                                                    {item.images && item.images.length > 0 ? (
-                                                        <img
-                                                            src={item.images[0]}
-                                                            alt={item.title}
-                                                            style={{ width: '100%', height: '100%', objectFit: 'contain', transition: 'transform 0.5s ease' }}
-                                                        />
-                                                    ) : (
-                                                        <ShoppingBag size={48} color="#cbd5e1" />
-                                                    )}
-                                                    <div style={{
-                                                        position: 'absolute',
-                                                        bottom: 0,
-                                                        left: 0,
-                                                        right: 0,
-                                                        background: 'rgba(255, 255, 255, 0.95)',
-                                                        padding: '0.75rem 1rem',
-                                                        display: 'flex',
-                                                        justifyContent: 'space-between',
-                                                        alignItems: 'center',
-                                                        backdropFilter: 'blur(4px)',
-                                                        borderTop: '1px solid rgba(0,0,0,0.05)'
-                                                    }}>
-                                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                            <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '2px' }}>إعلان</span>
-                                                            <span style={{ fontWeight: 600, fontSize: '0.95rem', color: 'var(--text-primary)' }}>{item.title}</span>
-                                                        </div>
-                                                        <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '1.1rem' }}>{item.price > 0 ? `${item.price} ر.س` : 'سوم'}</span>
-                                                    </div>
+                                            <div className={styles.temuCardBody}>
+                                                <h3 className={styles.temuCardTitle}>
+                                                    {item.title}
+                                                </h3>
+                                                <div className={styles.temuCardPrice}>
+                                                    {item.price > 0 ? `${item.price} ر.س` : 'سوم'}
                                                 </div>
                                             </div>
                                         </Link>
@@ -522,7 +321,7 @@ const LandingPage = () => {
             <section className={styles.features} id="features">
                 <div className="container">
                     <div className={styles.sectionHeader}>
-                        <h2>لماذا تختار منصتي؟</h2>
+                        <h2>لماذا تختار جوري؟</h2>
                         <p>كل ما تحتاجه للنجاح في التجارة الإلكترونية</p>
                     </div>
 
@@ -557,10 +356,14 @@ const LandingPage = () => {
                         color: 'var(--text-muted)'
                     }}>
                         <div style={{ display: 'flex', gap: '2rem' }}>
-                            <Link to="/about" style={{ textDecoration: 'none', color: 'var(--text-muted)', fontSize: '0.9rem' }}>عن المطور</Link>
-                            <Link to="/ads" style={{ textDecoration: 'none', color: 'var(--text-muted)', fontSize: '0.9rem' }}>الإعلانات الصغيرة</Link>
+                            <Link to="/about" style={{ textDecoration: 'none', color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 600 }}>عن المطور</Link>
+                            <Link to="/ads" style={{ textDecoration: 'none', color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 600 }}>الإعلانات الصغيرة</Link>
                         </div>
-                        <p style={{ margin: 0 }}>© 2026 منصتي. جميع الحقوق محفوظة.</p>
+                        <div style={{ display: 'flex', gap: '1.5rem', margin: '0.5rem 0' }}>
+                            <a href="#" style={{ color: 'var(--primary)' }}><Facebook size={24} /></a>
+                            <a href="#" style={{ color: 'var(--primary)' }}><Instagram size={24} /></a>
+                        </div>
+                        <p style={{ margin: 0 }}>© 2026 جوري. جميع الحقوق محفوظة.</p>
                     </div>
                 </div>
             </footer>

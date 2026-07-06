@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Tag, MapPin, Clock, MessageCircle, ShoppingBag, Plus, Store } from 'lucide-react';
+import { Search, Tag, MapPin, Clock, MessageCircle, ShoppingBag, Plus, Store, Facebook, Instagram } from 'lucide-react';
 import styles from './LandingPage.module.css'; // Reuse landing page styles for consistency
 import API_URL from '../../config';
 
@@ -52,8 +52,8 @@ const Classifieds = () => {
             <nav className={styles.navbar} style={{ background: 'white', position: 'sticky', top: 0, zIndex: 100, borderBottom: '1px solid #e2e8f0' }}>
                 <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: '100%', padding: '0 1rem' }}>
                     <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none' }}>
-                        <Store size={28} color="var(--primary)" />
-                        <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b' }}>منصتي</span>
+                        <img src="/logo.png" alt="جوري" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+                        <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#1e293b' }}>جوري</span>
                     </Link>
                     <div className={styles.navLinks} style={{ gap: '0.5rem', display: 'flex' }}>
                         <Link to="/" className="btn btn-outline" style={{
@@ -262,10 +262,14 @@ const Classifieds = () => {
                         color: 'var(--text-muted)'
                     }}>
                         <div style={{ display: 'flex', gap: '2rem' }}>
-                            <Link to="/about" style={{ textDecoration: 'none', color: 'var(--text-muted)', fontSize: '0.9rem' }}>عن المطور</Link>
-                            <Link to="/" style={{ textDecoration: 'none', color: 'var(--text-muted)', fontSize: '0.9rem' }}>الرئيسية</Link>
+                            <Link to="/about" style={{ textDecoration: 'none', color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 600 }}>عن المطور</Link>
+                            <Link to="/" style={{ textDecoration: 'none', color: 'var(--primary)', fontSize: '0.9rem', fontWeight: 600 }}>الرئيسية</Link>
                         </div>
-                        <p style={{ margin: 0 }}>© 2026 منصتي. جميع الحقوق محفوظة.</p>
+                        <div style={{ display: 'flex', gap: '1.5rem', margin: '0.5rem 0' }}>
+                            <a href="#" style={{ color: 'var(--primary)' }}><Facebook size={24} /></a>
+                            <a href="#" style={{ color: 'var(--primary)' }}><Instagram size={24} /></a>
+                        </div>
+                        <p style={{ margin: 0 }}>© 2026 جوري. جميع الحقوق محفوظة.</p>
                     </div>
                 </div>
             </footer >

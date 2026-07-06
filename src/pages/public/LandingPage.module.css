@@ -453,3 +453,75 @@
         height: 350px;
     }
 }
+
+.itemsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .itemsGrid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+}
+
+.temuCard {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    height: 100%;
+}
+
+.temuCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.temuImageContainer {
+    width: 100%;
+    aspect-ratio: 1;
+    position: relative;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.temuImageContainer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.temuCardBody {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.temuCardTitle {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.temuCardPrice {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-top: auto;
+}
