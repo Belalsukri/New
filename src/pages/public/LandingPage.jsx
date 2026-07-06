@@ -191,7 +191,7 @@ const LandingPage = () => {
                                                 {product.name}
                                             </h3>
                                             <div className={styles.temuCardPrice}>
-                                                {product.price} ر.س
+                                                {product.price} ل.س
                                             </div>
                                         </div>
                                     </Link>
@@ -284,7 +284,7 @@ const LandingPage = () => {
                                                     {item.lastProduct ? item.lastProduct.name : item.name}
                                                 </h3>
                                                 <div className={styles.temuCardPrice}>
-                                                    {item.lastProduct ? `${item.lastProduct.price} ر.س` : 'تصفح المتجر'}
+                                                    {item.lastProduct ? `${item.lastProduct.price} ل.س` : 'تصفح المتجر'}
                                                 </div>
                                             </div>
                                         </Link>
@@ -305,7 +305,7 @@ const LandingPage = () => {
                                                     {item.title}
                                                 </h3>
                                                 <div className={styles.temuCardPrice}>
-                                                    {item.price > 0 ? `${item.price} ر.س` : 'سوم'}
+                                                    {item.price > 0 ? `${item.price} ل.س` : 'سوم'}
                                                 </div>
                                             </div>
                                         </Link>

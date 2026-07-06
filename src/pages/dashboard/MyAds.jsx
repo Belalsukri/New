@@ -100,7 +100,7 @@ const MyAds = () => {
                                         <span style={{ fontSize: '0.85rem', background: '#f1f5f9', padding: '0.2rem 0.75rem', borderRadius: '20px' }}>{ad.category}</span>
                                     </td>
                                     <td style={{ padding: '1.25rem 1.5rem', fontWeight: 700, color: 'var(--primary)' }}>
-                                        {ad.price > 0 ? `${ad.price} ر.س` : 'مجاني'}
+                                        {ad.price > 0 ? `${ad.price} ل.س` : 'مجاني'}
                                     </td>
                                     <td style={{ padding: '1.25rem 1.5rem', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>

@@ -46,8 +46,8 @@ const ProductDetails = () => {
     if (store.phoneNumber) {
         let cleanPhone = store.phoneNumber.replace(/\D/g, '');
         cleanPhone = cleanPhone.replace(/^0+/, '');
-        if (cleanPhone.startsWith('5') && cleanPhone.length === 9) {
-            cleanPhone = '966' + cleanPhone;
+        if (cleanPhone.startsWith('9') && cleanPhone.length === 9) {
+            cleanPhone = '963' + cleanPhone;
         }
         const imageUrl = product.images?.[0] || '';
         const isRemoteUrl = imageUrl.startsWith('http');
@@ -121,7 +121,7 @@ const ProductDetails = () => {
                         <div style={{ background: 'white', padding: '1.5rem', borderRadius: '12px', marginBottom: '1rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
                             <h1 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem', lineHeight: '1.4' }}>{product.name}</h1>
                             <div style={{ color: '#ef4444', fontWeight: 700, fontSize: '1.5rem', marginBottom: '1rem' }}>
-                                {product.price} ر.س
+                                {product.price} ل.س
                             </div>
                             {product.description && (
                                 <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #f1f5f9' }}>

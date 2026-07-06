@@ -282,7 +282,7 @@ const CreateAd = () => {
                                 required
                                 value={formData.phoneNumber}
                                 onChange={e => setFormData({ ...formData, phoneNumber: e.target.value })}
-                                placeholder="05xxxxxxxx"
+                                placeholder="09xxxxxxxx"
                             />
                         </div>
                         <div style={{ marginBottom: '1.25rem' }}>
@@ -292,7 +292,7 @@ const CreateAd = () => {
                                 required
                                 value={formData.location}
                                 onChange={e => setFormData({ ...formData, location: e.target.value })}
-                                placeholder="الرياض، مكة..."
+                                placeholder="دمشق، حلب..."
                             />
                         </div>
                         <div style={{ marginBottom: '1.25rem' }}>
@@ -302,7 +302,7 @@ const CreateAd = () => {
                                 type="number"
                                 value={formData.price}
                                 onChange={e => setFormData({ ...formData, price: e.target.value })}
-                                placeholder="ر.س"
+                                placeholder="ل.س"
                             />
                             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>اتركه فارغاً أو 0 إذا كان غير محدد</p>
                         </div>

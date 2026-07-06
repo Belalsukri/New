@@ -342,7 +342,7 @@ const AdminDashboard = () => {
                                     className="input"
                                     value={formData.phoneNumber || ''}
                                     onChange={(e) => setFormData(prev => ({ ...prev, phoneNumber: e.target.value }))}
-                                    placeholder="05xxxxxxxx"
+                                    placeholder="09xxxxxxxx"
                                 />
                             </div>
 

@@ -71,7 +71,7 @@ const Products = () => {
                                         </div>
                                     </td>
                                     <td style={{ padding: '1rem' }}>{product.category}</td>
-                                    <td style={{ padding: '1rem' }}>{product.price} ر.س</td>
+                                    <td style={{ padding: '1rem' }}>{product.price} ل.س</td>
                                     <td style={{ padding: '1rem' }}>
                                         <div style={{ display: 'flex', gap: '0.5rem' }}>
                                             <Link to={`/dashboard/products/edit/${product._id}`} className="btn btn-outline" style={{ padding: '0.5rem' }}>

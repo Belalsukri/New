@@ -207,7 +207,7 @@ const AddProduct = () => {
                     </div>
 
                     <div style={inputGroupStyle}>
-                        <label style={{ fontWeight: 500 }}>السعر (ر.س)</label>
+                        <label style={{ fontWeight: 500 }}>السعر (ل.س)</label>
                         <input
                             style={inputStyle}
                             type="number"

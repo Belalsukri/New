@@ -366,7 +366,7 @@ const StoreSettings = () => {
                             <input
                                 className="input"
                                 type="tel"
-                                placeholder="05xxxxxxxx"
+                                placeholder="09xxxxxxxx"
                                 value={formData.phoneNumber}
                                 onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                             />

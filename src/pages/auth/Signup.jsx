@@ -146,7 +146,7 @@ const Signup = () => {
                                     <Phone size={20} className={styles.inputIcon} />
                                     <input
                                         type="tel"
-                                        placeholder="مثال: 05xxxxxxx"
+                                        placeholder="مثال: 09xxxxxxx"
                                         value={formData.storePhone}
                                         onChange={(e) => setFormData({ ...formData, storePhone: e.target.value })}
                                         required

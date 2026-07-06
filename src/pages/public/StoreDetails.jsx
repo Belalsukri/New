@@ -186,15 +186,15 @@ const StoreDetails = () => {
                                         </div>
                                         <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>{product.name}</h3>
                                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>{product.description}</p>
-                                        <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.2rem' }}>{product.price} ر.س</p>
+                                        <p style={{ color: 'var(--primary)', fontWeight: 700, fontSize: '1.2rem' }}>{product.price} ل.س</p>
                                     </Link>
                                     {(() => {
                                         if (!store.phoneNumber) return null;
 
                                         let cleanPhone = store.phoneNumber.replace(/\D/g, '');
                                         cleanPhone = cleanPhone.replace(/^0+/, '');
-                                        if (cleanPhone.startsWith('5') && cleanPhone.length === 9) {
-                                            cleanPhone = '966' + cleanPhone;
+                                        if (cleanPhone.startsWith('9') && cleanPhone.length === 9) {
+                                            cleanPhone = '963' + cleanPhone;
                                         }
 
                                         const imageUrl = product.images?.[0] || '';

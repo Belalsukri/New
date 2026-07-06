@@ -231,7 +231,7 @@ const Classifieds = () => {
                                             <span>{ad.location}</span>
                                         </div>
                                         <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)' }}>{ad.price > 0 ? `${ad.price} ر.س` : 'مجاني'}</span>
+                                            <span style={{ fontSize: '1rem', fontWeight: 800, color: 'var(--primary)' }}>{ad.price > 0 ? `${ad.price} ل.س` : 'مجاني'}</span>
                                             <div style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.7rem' }}>
                                                 <Clock size={11} />
                                                 <span>{new Date(ad.createdAt).toLocaleDateString('ar-SA')}</span>
